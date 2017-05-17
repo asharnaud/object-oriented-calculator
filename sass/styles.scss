@@ -1,0 +1,86 @@
+// -------------------------------------------
+// Constants
+// -------------------------------------------
+$primaryColor: #64b255;
+$operatorColor: #83c178;
+
+$maxWidth: 1200px;
+$tabletWidth: 960px;
+$mobileWidth: 600px;
+
+// -------------------------------------------
+// Class Rules
+// -------------------------------------------
+.multiple-calc-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap:wrap;
+}
+.calc-container {
+  margin: 0 auto;
+  text-align: center;
+  width: 30%;
+  padding:5px 0px 50px 0px;
+}
+
+.inner-btns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap:wrap;
+}
+
+.num, .decimal, .equals {
+  background-color: $primaryColor;
+}
+
+.btn {
+  border: 1px solid white;
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 40px;
+  padding: 20px;
+  flex:1;
+  flex-basis:25%;
+}
+
+.output-row {
+  background-color: $primaryColor;
+  display: flex;
+}
+
+.result-box {
+  flex:3;
+}
+
+.operator {
+  background-color: $operatorColor;
+}
+
+.clear {
+  background-color: $primaryColor;
+  flex:0.8;
+}
+.clear:hover {
+  background-color: $operatorColor;
+}
+
+//---------------------------------------
+//  Tablet Rules
+//----------------------------------------
+@media only screen and (max-width: $tabletWidth) {
+  .calc-container {
+    margin: 5px;
+    width: 80%;
+  }
+}
+
+//----------------------------------------
+//  Mobile Rules
+//----------------------------------------
+//
+@media only screen and (max-width: $mobileWidth) {
+  .calc-container {
+    margin: 2px;
+    width: 90%;
+  }
+}
