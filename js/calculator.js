@@ -1,44 +1,127 @@
 // !!!!! NO CODE ABOVE THIS LINE !!!!!!
+let $ = window.jQuery
+
 class Calculator {
-  constructor (container) {
-    this.container = container
-    document.getElementById(container).innerHTML = this._buildHtml()
+  constructor (containerElId) {
+    let el = document.getElementById(containerElId)
+    if (!el) {
+      console.log('Please pass a valid element.')
+      return
+    }
+    this.idEl = containerElId
+    this._containerEl = el
+    this._containerEl.innerHTML = this._buildHtml()
+    // this.containerEl = containerElId
+    this._addEvents()
+    this.press()
+    this.expression = []
+    this.number = ''
+    this.operator = ''
+    this._total = 0
+  }
+// ------------------------------------------------------------
+// Public Methods
+// ------------------------------------------------------------
+  press (buttonClass, html) {
+    let that = this
+    let resultBox = $('#' + that.idEl + ' .sum')
+    if (buttonClass === 'btn num') {
+      that.number += html
+      resultBox.html(html)
+      that.expression.push(html)
+      console.log(that.expression)
+    } else if (buttonClass === 'btn operator') {
+      that.operator += html
+      resultBox.html(that.expression)
+      that.expression.push(html)
+      console.log(that.expression)
+    } else if (buttonClass === 'btn clear') {
+      that.expression = []
+      resultBox.html('')
+    } else if (buttonClass === 'btn equals') {
+      that.expression.push(html)
+      that._calculate()
+      resultBox.html(that._calculate())
+      console.log(that.expression)
+    }
   }
 
-  press () {
+  pressButton () {
+    this.press()
+  }
+
+  value () {
+    this._calculate()
+  }
+
+  lock () {
 
   }
+
+  unlock () {
+
+  }
+
+  sayHello () {
+
+  }
+
 // ------------------------------------------------------------
 // Private Methods
 // ------------------------------------------------------------
+  _addEvents () {
+    let that = this
+    $('#' + that.idEl + ' .btn').click(function (evt) {
+      let buttonClass = evt.target.className
+      let html = evt.target.innerHTML
+      that.press(buttonClass, html)
+    })
+  }
+
+  _calculate () {
+    let a = parseFloat(this.expression[0])
+    let b = parseFloat(this.expression[2])
+    if (this.expression[1] === '+') {
+      this._total = a + b
+    } else if (this.expression[1] === '-') {
+      this._total = a - b
+    } else if (this.expression[1] === '/') {
+      this._total = a / b
+    } else if (this.expression[1] === 'x') {
+      this._total = a * b
+    }
+    return this._total
+  }
 
   _buildHtml () {
-    return `<div class="output-row">
-      <button class="btn clear" id="clearall">c</button>
-      <a class="btn result-box" id="sum"></a>
-    </hr>
-    </div>
-    <div class="inner-btns">
-      <button class="btn num">7</button>
-      <button class="btn num">8</button>
-      <button class="btn num">9</button>
-      <button class="btn operator">/</button>
-    </br>
-      <button class="btn num">4</button>
-      <button class="btn num">5</button>
-      <button class="btn num">6</button>
-      <button class="btn operator">x</button>
-    </br>
-      <button class="btn num">1</button>
-      <button class="btn num">2</button>
-      <button class="btn num">3</button>
-      <button class="btn operator">-</button>
-    </br>
-      <button class="btn num">0</button>
-      <button class="btn decimal" id="decimal">.</button>
-      <button class="btn equals" id="equals">=</button>
-      <button class="btn operator">+</button>
-    </div>
+    return `<div class="calculator" id="calc">
+      <div class="output-row">
+        <button class="btn clear" id="clearall">c</button>
+        <div class="btn sum"></div>
+      </hr>
+      </div>
+      <div class="inner-btns">
+        <button class="btn num">7</button>
+        <button class="btn num">8</button>
+        <button class="btn num">9</button>
+        <button class="btn operator">/</button>
+      </br>
+        <button class="btn num">4</button>
+        <button class="btn num">5</button>
+        <button class="btn num">6</button>
+        <button class="btn operator">x</button>
+      </br>
+        <button class="btn num">1</button>
+        <button class="btn num">2</button>
+        <button class="btn num">3</button>
+        <button class="btn operator">-</button>
+      </br>
+        <button class="btn num">0</button>
+        <button class="btn decimal" id="decimal">.</button>
+        <button class="btn equals" id="equals">=</button>
+        <button class="btn operator">+</button>
+      </div>
+      </div>
     </div>`
   }
 }
