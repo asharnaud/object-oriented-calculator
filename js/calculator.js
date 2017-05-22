@@ -22,36 +22,18 @@ class Calculator {
 // ------------------------------------------------------------
 // Public Methods
 // ------------------------------------------------------------
-  press (buttonClass, html) {
-    let that = this
-    let resultBox = $('#' + that.idEl + ' .sum')
-    if (buttonClass === 'btn num') {
-      that.number += html
-      resultBox.html(html)
-      that.expression.push(html)
-      console.log(that.expression)
-    } else if (buttonClass === 'btn operator') {
-      that.operator += html
-      resultBox.html(that.expression)
-      that.expression.push(html)
-      console.log(that.expression)
-    } else if (buttonClass === 'btn clear') {
-      that.expression = []
-      resultBox.html('')
-    } else if (buttonClass === 'btn equals') {
-      that.expression.push(html)
-      that._calculate()
-      resultBox.html(that._calculate())
-      console.log(that.expression)
-    }
+
+  press (inputNum) {
+    // TODO: some validation of inputNum
+    // then pass it to your internal function
   }
 
-  pressButton () {
-    this.press()
+  pressButton (inputNum) {
+    return this.press(inputNum)
   }
 
   value () {
-    this._calculate()
+    return this._calculate()
   }
 
   lock () {
@@ -93,6 +75,30 @@ class Calculator {
     return this._total
   }
 
+  _operation (buttonClass, html) {
+    let that = this
+    let resultBox = $('#' + that.idEl + ' .sum')
+    if (buttonClass === 'btn num') {
+      that.number += html
+      resultBox.html(html)
+      that.expression.push(html)
+      console.log(that.expression)
+    } else if (buttonClass === 'btn operator') {
+      that.operator += html
+      resultBox.html(that.expression)
+      that.expression.push(html)
+      console.log(that.expression)
+    } else if (buttonClass === 'btn clear') {
+      that.expression = []
+      resultBox.html('')
+    } else if (buttonClass === 'btn equals') {
+      that.expression.push(html)
+      that._calculate()
+      resultBox.html(that._calculate())
+      console.log(that.expression)
+    }
+  }
+
   _buildHtml () {
     return `<div class="calculator" id="calc">
       <div class="output-row">
@@ -101,25 +107,25 @@ class Calculator {
       </hr>
       </div>
       <div class="inner-btns">
-        <button class="btn num">7</button>
-        <button class="btn num">8</button>
-        <button class="btn num">9</button>
-        <button class="btn operator">/</button>
+        <button class="btn num" data-num="7">7</button>
+        <button class="btn num" data-num="8">8</button>
+        <button class="btn num" data-num="9">9</button>
+        <button class="btn operator" data-operator="/">/</button>
       </br>
-        <button class="btn num">4</button>
-        <button class="btn num">5</button>
-        <button class="btn num">6</button>
-        <button class="btn operator">x</button>
+        <button class="btn num" data-num="4">4</button>
+        <button class="btn num" data-num="5">5</button>
+        <button class="btn num" data-num="6">6</button>
+        <button class="btn operator" data-operator="x">x</button>
       </br>
-        <button class="btn num">1</button>
-        <button class="btn num">2</button>
-        <button class="btn num">3</button>
-        <button class="btn operator">-</button>
+        <button class="btn num" data-num="1">1</button>
+        <button class="btn num" data-num="2">2</button>
+        <button class="btn num" data-num="3">3</button>
+        <button class="btn operator" data-operator="-">-</button>
       </br>
-        <button class="btn num">0</button>
+        <button class="btn num" data-num="0">0</button>
         <button class="btn decimal" id="decimal">.</button>
-        <button class="btn equals" id="equals">=</button>
-        <button class="btn operator">+</button>
+        <button class="btn equals" id="equals" data-operator="=">=</button>
+        <button class="btn operator" data-operator="+">+</button>
       </div>
       </div>
     </div>`
