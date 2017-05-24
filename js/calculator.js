@@ -8,24 +8,46 @@ class Calculator {
       console.log('Please pass a valid element.')
       return
     }
-    this.idEl = containerElId
+
+    this._idEl = containerElId
     this._containerEl = el
-    this._containerEl.innerHTML = this._buildHtml()
-    // this.containerEl = containerElId
-    this._addEvents()
-    this.press()
-    this.expression = []
-    this.number = ''
-    this.operator = ''
+    this._expression = []
+    this._number = ''
     this._total = 0
+    this._isLocked = false
+    this._lastButtonPressedOperator = false
+
+    this._containerEl.innerHTML = this._buildHtml()
+    this._addEvents()
   }
+
 // ------------------------------------------------------------
 // Public Methods
 // ------------------------------------------------------------
 
-  press (inputNum) {
-    // TODO: some validation of inputNum
-    // then pass it to your internal function
+  press (button) {
+    // do nothing if the calculator is locked
+    if (this._isLocked) return
+
+    // make sure button is a string
+    button = button + ''
+
+    // only allow single-character buttons
+    if (button.length !== 1) return
+
+    if (this._isOperator(button)) {
+      this._pressOperator(button)
+      // console.log(button)
+    } else if (button === 'c') {
+      this._pressClear()
+    } else if (button === '.') {
+      this._pressDecimal(button)
+    } else if (button === '=') {
+      this._pressEquals(button)
+    } else {
+      this._updateNum(button)
+      this._renderResult(this._number)
+    }
   }
 
   pressButton (inputNum) {
@@ -33,19 +55,49 @@ class Calculator {
   }
 
   value () {
-    return this._calculate()
+    let a = parseFloat(this._expression[0])
+    let b = parseFloat(this._expression[2])
+    if (this._expression.length <= 2) {
+      return null
+    }
+    if (this._expression[1] === '+') {
+      this._total = a + b
+    } else if (this._expression[1] === '-') {
+      this._total = a - b
+    } else if (this._expression[1] === '/') {
+      this._total = a / b
+    } else if (this._expression[1] === 'x') {
+      this._total = a * b
+    }
+    this._renderResult(this._total)
+    return this._total
   }
 
   lock () {
-
+    this._isLocked = true
+    // TODO: update the UI here
   }
 
   unlock () {
-
+    this._isLocked = false
+    // TODO: update the UI here
   }
 
   sayHello () {
+    this._expression = []
+    this._number = ''
+    this._number = '0.7734'
+  }
 
+  toString () {
+    if (this._number !== '') {
+      this._expression.push(this._number)
+    }
+    return this._expression.join(' ')
+  }
+
+  destroy () {
+    this._containerEl.innerHTML = ''
   }
 
 // ------------------------------------------------------------
@@ -53,56 +105,68 @@ class Calculator {
 // ------------------------------------------------------------
   _addEvents () {
     let that = this
-    $('#' + that.idEl + ' .btn').click(function (evt) {
-      let buttonClass = evt.target.className
-      let html = evt.target.innerHTML
-      that.press(buttonClass, html)
+    $(this._idEl).click(function (evt) {
+      let inputNum = evt.target.value
+      if (inputNum !== undefined) {
+        that.press(inputNum)
+      }
     })
   }
-
-  _calculate () {
-    let a = parseFloat(this.expression[0])
-    let b = parseFloat(this.expression[2])
-    if (this.expression[1] === '+') {
-      this._total = a + b
-    } else if (this.expression[1] === '-') {
-      this._total = a - b
-    } else if (this.expression[1] === '/') {
-      this._total = a / b
-    } else if (this.expression[1] === 'x') {
-      this._total = a * b
-    }
-    return this._total
+  _pressClear () {
+    this._number = ''
+    this._expression = []
+    this._renderResult('0')
   }
 
-  _operation (buttonClass, html) {
-    let that = this
-    let resultBox = $('#' + that.idEl + ' .sum')
-    if (buttonClass === 'btn num') {
-      that.number += html
-      resultBox.html(html)
-      that.expression.push(html)
-      console.log(that.expression)
-    } else if (buttonClass === 'btn operator') {
-      that.operator += html
-      resultBox.html(that.expression)
-      that.expression.push(html)
-      console.log(that.expression)
-    } else if (buttonClass === 'btn clear') {
-      that.expression = []
-      resultBox.html('')
-    } else if (buttonClass === 'btn equals') {
-      that.expression.push(html)
-      that._calculate()
-      resultBox.html(that._calculate())
-      console.log(that.expression)
+  _isOperator (input) {
+    let opp = ['+', '-', 'x', '/', '=']
+    for (let i = 0; i < opp.length; i++) {
+      if (input === opp[i]) {
+        return true
+      }
     }
   }
+
+  _pressOperator (input) {
+    this._expression.push(this._number)
+    this._expression.push(input)
+    this._number = ''
+  }
+
+  _renderResult (input) {
+    let resultBox = $('#' + this._idEl + ' .sum')
+    resultBox.html(input)
+  }
+
+  _pressDecimal (input) {
+    if (input === '.' && this._number[this._number.length - 1] !== '.') {
+      this._updateNum(input)
+    }
+  }
+
+  _pressEquals (input) {
+    if (input === '=') {
+      this._expression.push(this._number)
+      this._renderResult(this.value())
+    }
+  }
+
+  _updateNum (input) {
+    this._number += input
+  }
+
+  // _updateExpression (input) {
+  //   let num = parseFloat(this._number)
+  //   this._expression.push(num)
+  //   this._number = ''
+  //   this._expression.push(input)
+  //   this._renderResult(input)
+  // }
 
   _buildHtml () {
     return `<div class="calculator" id="calc">
       <div class="output-row">
-        <button class="btn clear" id="clearall">c</button>
+        <button class="btn clear" id="clearall" data-clearall="c">c</button>
         <div class="btn sum"></div>
       </hr>
       </div>
@@ -123,8 +187,8 @@ class Calculator {
         <button class="btn operator" data-operator="-">-</button>
       </br>
         <button class="btn num" data-num="0">0</button>
-        <button class="btn decimal" id="decimal">.</button>
-        <button class="btn equals" id="equals" data-operator="=">=</button>
+        <button class="btn decimal" id="decimal" data-num=".">.</button>
+        <button class="btn equals" id="equals" data-equals="=">=</button>
         <button class="btn operator" data-operator="+">+</button>
       </div>
       </div>

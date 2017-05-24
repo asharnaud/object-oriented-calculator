@@ -20,7 +20,6 @@ calculator1.press('=')
 // after this string of commands, the calculator should be showing "8"
 
 // the .value() method returns a number value after '=' has been pressed
-console.log(calculator1.value())
 console.assert(calculator1.value() === 8)
 // or null if the calculator is not showing a value currently
 console.assert(calculator2.value() === null)
@@ -62,7 +61,7 @@ console.assert(calculator4.value() === 1.7734)
 
 // calculators can be completely removed from the DOM after calling the .destroy()
 // method
-setTimeout(calculator3.destroy, 8 * 1000)
+setTimeout(function () { calculator3.destroy() }, 8 * 1000)
 
 // the calculator should ignore any input that does not make sense
 // ie: just like a real calculator
@@ -73,3 +72,7 @@ calculator5.press('2')
 calculator5.press('+')
 calculator5.press('7')
 console.assert(calculator5.toString() === '3.2 + 7')
+
+// TODO:
+// - write .press() methods and then console.assert their .value()
+// - setInterval lock/unlock a calculator every 1 seconds
